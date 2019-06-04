@@ -29,3 +29,7 @@ optional arguments:
                         Output video filename. Defaults to "(blur type)_(blur
                         width)_(fps).mp4"
 ```
+
+## Dependencies
+Requires FFMPEG for video encoding
+Python libraries: argparse, os, Pillow, numpy, scipy
