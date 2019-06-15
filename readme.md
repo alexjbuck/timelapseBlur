@@ -32,4 +32,4 @@ optional arguments:
 
 ## Dependencies
 Requires FFMPEG for video encoding
-Python libraries: argparse, os, Pillow, numpy, scipy
+Python libraries: argparse, os, Pillow (PIL), numpy, scipy.comb, time
