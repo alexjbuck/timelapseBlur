@@ -2,7 +2,6 @@
 import argparse
 import os
 from PIL import Image
-import glob
 import numpy as np
 import pylab
 from scipy.special import comb
@@ -44,7 +43,6 @@ parser.add_argument('--vcodec',help='Video codec for FFMPEG.',default='libx264',
 parser.add_argument('-o','--output',help='Output video filename. Defaults to "(blur type)_(blur width)_(fps).mp4"',default='')
 
 args=parser.parse_args()
-# imgList = glob.glob('./*.jpg')
 imgList=args.imgList
 blur=args.blur
 degree=args.degree
