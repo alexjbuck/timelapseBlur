@@ -3,7 +3,6 @@ import argparse
 import os
 from PIL import Image
 import numpy as np
-import pylab
 from scipy.special import comb
 import time
 
@@ -57,7 +56,7 @@ printStatus(1,"Computing weights...")
 if blur=='binomial':
 	# Binomial degree 0 has 1 element, which is why the +1 is required.
 	w = degree+1
-	X = pylab.array(range(0,w))
+	X = np.array(range(0,w))
 	Y = comb(degree,X,exact=False)
 	Y = Y/sum(Y)
 	printStatus(1,"Weights: "+str(Y))
@@ -87,69 +86,23 @@ if not os.path.exists(tempdir):
 	printStatus(1,"Creating directory "+tempdir)
 	os.makedirs(tempdir)
 
-if True:
-	nameImage = ()
-	for i in range(0,N):
-		# Add the actual image to the frames ndarray
-		printStatus(1,"Loading "+imgList[i]+"...")
-		frames[i%w] = np.asarray(Image.open(imgList[i])).astype('uint32')
-		printStatus(2,"Done")
-		# Add the img name to the nameImage tuple. Used diagnostically to see if the images
-		# still ine buffer line up with the rolling weights
-		nameImage = nameImage[:i%w] + (imgList[i],) + nameImage[i%w+1:]
-		if i>=w-1:
-			filename=tempdir+"/"+tempname+str(i).zfill(nzeros)+tempext
-			printStatus(1,"Blurring stack: " + nameImage[(i+1)%w] + " -> " + nameImage[i%w])
-			sumImage = sumImages(frames,np.roll(Y,i+1))
-			printStatus(2,"Done")
-			printStatus(1,"Saving stack...")
-			Image.fromarray(sumImage.astype('uint8')).save(filename)
-			printStatus(2,"Done")
-else:
-	printStatus(1,"Seeding frame buffer...")
-	for i in range(0,w):
-			printStatus(2,"Opening "+imgList[i])
-			frames[i] = np.asarray(Image.open(imgList[i])).astype('uint32')
-			printStatus(3,"Loaded")
-			sumImage = sumImages(frames,Y)
-	printStatus(2,"Initial frame buffer loaded")
-
-	filename=tempdir+"/"+tempname+str(0).zfill(nzeros)+tempext
-	sumImage = Image.fromarray(sumImage.astype('uint8'))
-	printStatus(2,"Saving stack: "+filename)
-	sumImage.save(filename)
-	printStatus(3,"Saved")
-
-	printStatus(1,"Creating intermediate frames...")
-	for i in range(1,N):
-		sumImage=np.zeros(frame.shape)
+nameImage = ()
+for i in range(0,N):
+	# Add the actual image to the frames ndarray
+	printStatus(1,"Loading "+imgList[i]+"...")
+	frames[i%w] = np.asarray(Image.open(imgList[i])).astype('uint32')
+	printStatus(2,"Done")
+	# Add the img name to the nameImage tuple. Used diagnostically to see if the images
+	# still ine buffer line up with the rolling weights
+	nameImage = nameImage[:i%w] + (imgList[i],) + nameImage[i%w+1:]
+	if i>=w-1:
 		filename=tempdir+"/"+tempname+str(i).zfill(nzeros)+tempext
-		frames=np.roll(frames,-1,axis=0)
-		printStatus(2,"Opening "+imgList[i+w-1])
-		frames[-1] = np.asarray(Image.open(imgList[i+w-1])).astype('uint32')
-		printStatus(3,"Loaded")
-		printStatus(2,"Blurring frames...")
-		for j in range(0,w):
-			sumImage = sumImage + frames[j]*Y[j]
-		printStatus(3,"Done")
-		sumImage = Image.fromarray(sumImage.astype('uint8'))
-		printStatus(2,"Saving stack: "+filename)
-		sumImage.save(filename)
-		printStatus(3,"Saved")
-
-# for i in range(0,N):
-# 	sumImage=np.zeros(frame.shape)
-# 	filename=tempdir+"/"+tempname+str(i).zfill(nzeros)+tempext
-# 	if not os.path.exists(filename):
-# 		for j in range(0,w):
-# 			printStatus(2,"Opening "+imgList[i+j])
-# 			temp = np.asarray(Image.open(imgList[i+j]))
-# 			temp = temp.astype('uint32')
-# 			printStatus(3,"Loaded")
-# 			sumImage = sumImage + temp*Y[j]
-# 		sumImage = Image.fromarray(sumImage.astype('uint8'))
-# 		printStatus(2,"Saving stack: "+filename)
-# 		sumImage.save(filename)
+		printStatus(1,"Blurring stack: " + nameImage[(i+1)%w] + " -> " + nameImage[i%w])
+		sumImage = sumImages(frames,np.roll(Y,i+1))
+		printStatus(2,"Done")
+		printStatus(1,"Saving stack...")
+		Image.fromarray(sumImage.astype('uint8')).save(filename)
+		printStatus(2,"Done")
 
 if output == '':
 	output=blur+"_"+str(w)+"_"+str(fps)+".mp4"
