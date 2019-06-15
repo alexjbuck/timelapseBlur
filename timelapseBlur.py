@@ -96,7 +96,7 @@ for i in range(0,N):
 	# still ine buffer line up with the rolling weights
 	nameImage = nameImage[:i%w] + (imgList[i],) + nameImage[i%w+1:]
 	if i>=w-1:
-		filename=tempdir+"/"+tempname+str(i).zfill(nzeros)+tempext
+		filename=tempdir+"/"+tempname+str(i-w+1).zfill(nzeros)+tempext
 		printStatus(1,"Blurring stack: " + nameImage[(i+1)%w] + " -> " + nameImage[i%w])
 		sumImage = sumImages(frames,np.roll(Y,i+1))
 		printStatus(2,"Done")
