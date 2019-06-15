@@ -111,3 +111,4 @@ infiles=tempdir+"/"+tempname+"%0"+str(nzeros)+"d"+tempext
 
 printStatus(1,"Creating output file: "+output+" using inputs: "+infiles)
 os.system("ffmpeg -r "+str(fps)+" -i "+infiles+" -r "+str(fps)+" -vcodec "+vcodec+" "+output)
+printStatus(2,"Movie created: " + output)
