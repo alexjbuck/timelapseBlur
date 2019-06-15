@@ -33,6 +33,7 @@ def sumImages(frames,weights):
 
 
 parser = argparse.ArgumentParser(description='Combine images into a blurred timelapse. Stack together a moving window to create each frame, then combine into a video output file. If blurring window is reduced to a single frame, this will produce a standard timelapse without blurring. As the blurring window increases in size (n), the resulting output video, given (N) input frames, will be reduced to (N-n) output frames.')
+
 parser.add_argument('--input','-i',help="Input files.",required=True,dest='imgList',nargs='+',type=str)
 parser.add_argument('--blur','-b',help="Frame blur type. Sets the frame weighting distribution.",choices=['binomial','constant'],default='binomial',type=str)
 parser.add_argument('--degree','--deg','-d',help="Degree of coefficients for image blurring, n. Binomial blurring window is n+1 frames wide. Constant blurring window is n frames wide.",default=5,type=int)
@@ -71,7 +72,7 @@ frame = np.asarray(Image.open(imgList[0]));
 temp = np.zeros(frame.shape)	
 sumImage = np.zeros(frame.shape)
 N = len(imgList)
-N = min(N,len(imgList)-w)
+# N = min(N,len(imgList)-w)
 frames = np.zeros((w,frame.shape[0],frame.shape[1],frame.shape[2]))
 
 printStatus(1,str(frames.shape))
@@ -87,6 +88,7 @@ if not os.path.exists(tempdir):
 	os.makedirs(tempdir)
 
 nameImage = ()
+# Main blurring loop
 for i in range(0,N):
 	# Add the actual image to the frames ndarray
 	printStatus(1,"Loading "+imgList[i]+"...")
@@ -100,7 +102,7 @@ for i in range(0,N):
 		printStatus(1,"Blurring stack: " + nameImage[(i+1)%w] + " -> " + nameImage[i%w])
 		sumImage = sumImages(frames,np.roll(Y,i+1))
 		printStatus(2,"Done")
-		printStatus(1,"Saving stack...")
+		printStatus(1,"Saving stack: " + filename)
 		Image.fromarray(sumImage.astype('uint8')).save(filename)
 		printStatus(2,"Done")
 
